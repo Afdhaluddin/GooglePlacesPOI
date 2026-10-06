@@ -1,0 +1,29 @@
+# --- Secrets & local env ---
+.env
+.env.local
+*.local
+
+# --- Backend (Java / Maven) ---
+backend/target/
+backend/logs/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# --- Frontend (Node / Vite) ---
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+*.tsbuildinfo

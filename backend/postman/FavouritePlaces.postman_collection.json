@@ -1,0 +1,256 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-0001-4a11-b111-111111111111",
+    "name": "Favourite Places API",
+    "description": "Cards IT take-home assignment - Favourite Places REST API (v1, JWT secured).\n\nUsage: 1) Run 'Register' once (or skip if the user exists). 2) Run 'Login' and copy the \"token\" value from the JSON response. 3) Paste it into the collection variable 'token' (or let the Login test script set it automatically). All /api/v1/places requests send 'Authorization: Bearer {{token}}'.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"demo\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Automatically copy the JWT from the login response into the",
+                  "// 'token' collection variable used by the secured requests.",
+                  "const body = pm.response.json();",
+                  "if (body.token) {",
+                  "    pm.collectionVariables.set('token', body.token);",
+                  "    console.log('token saved to collection variable');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"demo\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Create Place (save favourite)",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Kuala Lumpur City Centre\",\n  \"address\": \"Kuala Lumpur City Centre, 50088 Kuala Lumpur, Malaysia\",\n  \"latitude\": 3.1579,\n  \"longitude\": 101.7116,\n  \"googlePlaceId\": \"ChIJr2m0PHxJzDER9VvEXAMPLE\",\n  \"favourite\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/places",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "places"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Place",
+      "request": {
+        "method": "PUT",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"KLCC Park\",\n  \"address\": \"KLCC, Lot No. 241, Level 2, 50088 Kuala Lumpur, Malaysia\",\n  \"latitude\": 3.1554,\n  \"longitude\": 101.7135,\n  \"googlePlaceId\": \"ChIJr2m0PHxJzDER9VvEXAMPLE\",\n  \"favourite\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/places/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "places", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Place by ID",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/places/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "places", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Places (paginated, 10 per page)",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/places?page=0&size=10&sort=createdAt,desc",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "places"],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            },
+            {
+              "key": "sort",
+              "value": "createdAt,desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Country Info (nested 3rd-party API call)",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/places/1/country-info",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "places", "1", "country-info"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Place",
+      "request": {
+        "method": "DELETE",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/places/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "places", "1"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
